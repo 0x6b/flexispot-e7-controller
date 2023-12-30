@@ -1,0 +1,3 @@
+[submodule "LoctekMotion_IoT"]
+	path = LoctekMotion_IoT
+	url = https://github.com/iMicknl/LoctekMotion_IoT
