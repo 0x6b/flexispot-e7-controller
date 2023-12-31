@@ -51,10 +51,12 @@ The script expects following connection between the breakout and the Pi.
 ## Operating System Setup
 
 1. You might need to enable serial connection for your pi. I'm not sure how or when I did it though.
-2. Add your user to `tty` group to work with `/dev/ttyS0`, and allow the group to read/write the serial.
+2. Add your user to `tty` (or `dialout`, based on your setup. Please check the group with `ls -l /dev/ttyS0`) group to work with `/dev/ttyS0`, and allow the group to read/write the serial.
 
     ```console
-    $ adduser $(whoami) tty # then log-out and -in again to activate change
+    $ adduser $(whoami) tty
+    $ adduser $(whoami) dialout
+    $ # then log-out and -in again to activate change
     $ sudo chmod 660 /dev/ttyS0
     ```
 
