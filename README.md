@@ -58,6 +58,52 @@ The script expects following connection between the breakout and the Pi.
     $ sudo chmod 660 /dev/ttyS0
     ```
 
+Rebooting the Pi would reset the permission. You may have to configure systemd as below.
+
+1. Create a systemd [path unit](https://www.freedesktop.org/software/systemd/man/latest/systemd.path.html), `/etc/systemd/system/ttyS0.path`, to monitor `/dev/ttyS0`.
+
+    ```
+    [Unit]
+    Description=Make /dev/ttyS0 group writable
+    
+    [Path]
+    PathExists=/dev/ttyS0
+    Unit=ttys0.service
+    
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+2. Create a systemd service, `/etc/systemd/system/ttyS0.service`, to act with the event.
+
+    ```
+    [Unit]
+    Description=Change /dev/ttyS0 permission
+    
+    [Service]
+    Type=simple
+    ExecStart=/usr/local/bin/chgrp.sh
+    
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+3. Create a simple shell script, `/usr/local/bin/chgrp.sh`, to change permission.
+
+    ```
+    #!/bin/sh
+    
+    sudo chmod g+r /dev/ttyS0
+    ```
+
+4. Enable the units.
+
+    ```console
+    $ sudo systemctl enable ttyS0.{path,service}
+    ```
+
+5. Reboot the pi and see how it works.
+
 ## Python
 
 ```console
