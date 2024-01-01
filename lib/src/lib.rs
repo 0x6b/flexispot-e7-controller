@@ -5,7 +5,10 @@ use rppal::{
     uart::{Parity, Uart},
 };
 
-use crate::command::Command;
+use crate::command::{
+    Command,
+    Command::{Down, Preset1, Preset2, Preset3, Preset4, Sitting, Standing, Up},
+};
 
 mod command;
 
@@ -30,70 +33,46 @@ impl FlexispotE7Controller {
     }
 
     fn execute(&mut self, command: &Command) -> Result<(), Box<dyn Error>> {
-        match self.uart.write(&command.command()) {
-            Ok(_) => Ok(()),
-            Err(why) => {
-                let error: Box<dyn Error> = why.to_string().into();
-                return Err(error);
-            }
-        }
+        self.uart.write(&command.command())?;
+        Ok(())
     }
 
     pub fn up(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Command::Up)?)
+        Ok(self.execute(&Up)?)
     }
 
     pub fn down(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Command::Down)?)
+        Ok(self.execute(&Down)?)
     }
 
     pub fn standing(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Command::Standing)?)
+        Ok(self.execute(&Standing)?)
     }
 
     pub fn sitting(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Command::Sitting)?)
+        Ok(self.execute(&Sitting)?)
     }
 
     pub fn preset1(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Command::Preset1)?)
+        Ok(self.execute(&Preset1)?)
     }
 
     pub fn preset2(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Command::Preset2)?)
+        Ok(self.execute(&Preset2)?)
     }
 
     pub fn preset3(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Command::Preset3)?)
+        Ok(self.execute(&Preset3)?)
     }
 
     pub fn preset4(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Command::Preset4)?)
-    }
-
-    fn decode_seven_segment(byte: u8) -> (i32, bool) {
-        let binary_byte = format!("{:08b}", byte);
-        let decimal = &binary_byte[0..1] == "1";
-
-        match &binary_byte[1..] {
-            "0111111" => (0, decimal),
-            "0000110" => (1, decimal),
-            "1011011" => (2, decimal),
-            "1001111" => (3, decimal),
-            "1100110" => (4, decimal),
-            "1101101" => (5, decimal),
-            "1111101" => (6, decimal),
-            "0000111" => (7, decimal),
-            "1111111" => (8, decimal),
-            "1101111" => (9, decimal),
-            "1000000" => (10, decimal),
-            _ => (-1, decimal),
-        }
+        Ok(self.execute(&Preset4)?)
     }
 
     pub fn query(&mut self) -> Result<i32, Box<dyn Error>> {
+        // Wake up controller to return current height. I'm not 100% sure I need this though.
         self.pin.set_high();
-        thread::sleep(Duration::from_millis(300));
+        thread::sleep(Duration::from_millis(100));
         self.pin.set_low();
 
         // Command::WakeUp should work, but my unit/environment won't return current hight reliably
@@ -138,21 +117,7 @@ impl FlexispotE7Controller {
                 }
                 if history[4] == 0x9b {
                     if valid && msg_len == 7 {
-                        let (height1, decimal1) = Self::decode_seven_segment(history[1]);
-                        let height1 = height1 * 100;
-                        let (height2, decimal2) = Self::decode_seven_segment(history[0]);
-                        let height2 = height2 * 10;
-                        let (height3, decimal3) = Self::decode_seven_segment(data[0]);
-                        if height1 < 0 || height2 < 0 || height3 < 0 {
-                            println!("Display empty");
-                        } else {
-                            let mut height = height1 + height2 + height3;
-                            let decimal = decimal1 || decimal2 || decimal3;
-                            if decimal {
-                                height = height / 10;
-                            }
-                            return Ok(height);
-                        }
+                        return Self::decode(history[1], history[0], data[0]);
                     }
                 }
                 history[4] = history[3];
@@ -162,5 +127,45 @@ impl FlexispotE7Controller {
                 history[0] = data[0];
             }
         }
+    }
+
+    fn decode(b0: u8, b1: u8, b2: u8) -> Result<i32, Box<dyn Error>> {
+        let (height1, decimal1) = Self::decode_seven_segment(b0);
+        let (height2, decimal2) = Self::decode_seven_segment(b1);
+        let (height3, decimal3) = Self::decode_seven_segment(b2);
+
+        let height1 = height1 * 100;
+        let height2 = height2 * 10;
+
+        if height1 < 0 || height2 < 0 || height3 < 0 {
+            return Err("Display empty".into());
+        }
+
+        let mut height = height1 + height2 + height3;
+
+        if decimal1 || decimal2 || decimal3 {
+            height = height / 10;
+        }
+        return Ok(height);
+    }
+
+    fn decode_seven_segment(byte: u8) -> (i32, bool) {
+        (
+            match byte & 0b0111_1111 {
+                0b0011_1111 => 0,
+                0b0000_0110 => 1,
+                0b0101_1011 => 2,
+                0b0100_1111 => 3,
+                0b0110_0110 => 4,
+                0b0110_1101 => 5,
+                0b0111_1101 => 6,
+                0b0000_0111 => 7,
+                0b0111_1111 => 8,
+                0b0110_1111 => 9,
+                0b0100_0000 => 10,
+                _ => -1,
+            },
+            byte & 0b1000_0000 != 0,
+        )
     }
 }
