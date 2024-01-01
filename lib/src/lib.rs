@@ -1,5 +1,6 @@
 use std::{error::Error, path::PathBuf, thread, time::Duration};
 
+pub use command::Preset;
 use rppal::{
     gpio::{Gpio, OutputPin},
     uart::{Parity, Uart},
@@ -7,9 +8,8 @@ use rppal::{
 
 use crate::command::{
     Command,
-    Command::{Down, Preset1, Preset2, Preset3, Preset4, Sitting, Standing, Up},
+    Command::{Down, Up},
 };
-
 mod command;
 
 #[derive(Debug)]
@@ -28,6 +28,12 @@ impl FlexispotE7Controller {
             uart: Uart::with_path(path.into(), 9600, Parity::None, 8, 1)?,
             pin: Gpio::new()?.get(pin20)?.into_output(),
         })
+    }
+
+    pub fn go(&mut self, preset: &Preset) -> Result<(), Box<dyn Error>> {
+        let command: [u8; 8] = preset.into();
+        self.uart.write(&command)?;
+        Ok(())
     }
 
     fn execute(&mut self, command: &Command) -> Result<(), Box<dyn Error>> {
@@ -59,30 +65,6 @@ impl FlexispotE7Controller {
         } else {
             self.down(Some(diff))
         }
-    }
-
-    pub fn standing(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Standing)?)
-    }
-
-    pub fn sitting(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Sitting)?)
-    }
-
-    pub fn preset1(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Preset1)?)
-    }
-
-    pub fn preset2(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Preset2)?)
-    }
-
-    pub fn preset3(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Preset3)?)
-    }
-
-    pub fn preset4(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Preset4)?)
     }
 
     pub fn query(&mut self) -> Result<i32, Box<dyn Error>> {
