@@ -1,14 +1,14 @@
 use std::{error::Error, path::PathBuf, thread, time::Duration};
 
-pub use command::Command;
 use command::CommandArray;
-pub use command::Preset;
+pub use command::{Command, Preset};
 use rppal::{
     gpio::{Gpio, OutputPin},
     uart::{Parity, Uart},
 };
 
 use crate::command::Command::{Down, Up};
+
 mod command;
 
 #[derive(Debug)]
