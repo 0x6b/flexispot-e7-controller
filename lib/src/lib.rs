@@ -94,6 +94,7 @@ impl FlexispotE7Controller {
                 if history[1] == 0x9b {
                     msg_type = data[0];
                 }
+                #[allow(clippy::collapsible_if)]
                 if history[2] == 0x9b {
                     if msg_type == 0x12 && msg_len == 7 {
                         if data[0] == 0 {
@@ -103,6 +104,7 @@ impl FlexispotE7Controller {
                         }
                     }
                 }
+                #[allow(clippy::collapsible_if)]
                 if history[3] == 0x9b {
                     if valid {
                         history[4] = history[3];
@@ -113,6 +115,7 @@ impl FlexispotE7Controller {
                         continue;
                     }
                 }
+                #[allow(clippy::collapsible_if)]
                 if history[4] == 0x9b {
                     if valid && msg_len == 7 {
                         return Self::decode(history[1], history[0], data[0]);
@@ -142,9 +145,9 @@ impl FlexispotE7Controller {
         let mut height = height1 + height2 + height3;
 
         if decimal1 || decimal2 || decimal3 {
-            height = height / 10;
+            height /= 10;
         }
-        return Ok(height);
+        Ok(height)
     }
 
     fn decode_seven_segment(byte: u8) -> (i32, bool) {
@@ -168,12 +171,9 @@ impl FlexispotE7Controller {
     }
 
     fn to_loop_count(diff: Option<f32>) -> usize {
+        // 29 is determined heuristically, so it may not be accurate for every setup.
         match diff {
-            Some(v) => {
-                let v = v.abs();
-                // 29 is determined heuristically, so it may not be accurate for every setup.
-                return (v * 29f32).ceil() as usize;
-            }
+            Some(v) => (v.abs() * 29f32).ceil() as usize,
             None => 1,
         }
     }
@@ -184,6 +184,6 @@ impl FlexispotE7Controller {
         } else if v > 126.0 {
             return 126.0;
         }
-        return v;
+        v
     }
 }
