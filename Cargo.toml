@@ -1,0 +1,11 @@
+[workspace]
+members = ["cli", "lib"]
+resolver = "2"
+
+[workspace.package]
+authors = ["kaoru <k@warpnine.io>"]
+edition = "2021"
+repository = "https://github.com/0x6b/flexispot-e7-controller"
+
+[workspace.dependencies]
+flexispot_e7_controller_lib = { path = "lib" }

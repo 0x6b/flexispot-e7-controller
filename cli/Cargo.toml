@@ -1,0 +1,16 @@
+[package]
+name = "flexispot_e7_controller_cli"
+version = "0.1.0"
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+description = "Control your Flexispot E7 with Raspberry Pi"
+
+[[bin]]
+name = "e7"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.4.12", features = ["derive"] }
+rppal = "0.16.1"
+flexispot_e7_controller_lib.workspace = true
