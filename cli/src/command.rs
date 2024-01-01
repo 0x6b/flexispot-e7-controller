@@ -25,4 +25,7 @@ pub enum Command {
 
     /// Position 4, alias for "sitting" position
     Preset4,
+
+    /// Query current height
+    Query,
 }
