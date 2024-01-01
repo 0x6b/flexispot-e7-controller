@@ -2,42 +2,42 @@ use clap::Subcommand;
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    /// Adjust the desk upwards
+    /// Adjust the desk upwards. If specified, adjsut upwards in centimeters.
     Up {
         /// Height to change, in cm
         diff: Option<f32>,
     },
 
-    /// Adjust the desk downwards
+    /// Adjust the desk downwards. If specified, adjsut downwards in centimeters.
     Down {
         /// Height to change, in cm
         diff: Option<f32>,
     },
 
-    /// The position of the standing height saved
+    /// Set the desk height to the specified centimeters. Not so accurate.
+    Set {
+        /// Height in cm
+        height: f32,
+    },
+
+    /// Move to the position you saved for standing height.
     Standing,
 
-    /// The position of the sitting height saved
+    /// Move to the position you saved for sitting height.
     Sitting,
 
-    /// Position 1, first height position saved
+    /// Move to the position 1.
     Preset1,
 
-    /// Position 2, second height position saved
+    /// Move to the position 2.
     Preset2,
 
-    /// Position 3, alias for "standing" position
+    /// Move to the position 3, alias for "standing" position.
     Preset3,
 
-    /// Position 4, alias for "sitting" position
+    /// Move to the position 4, alias for "sitting" position.
     Preset4,
 
     /// Query current height
     Query,
-
-    /// Set height
-    Set {
-        /// Height to change, in cm
-        height: f32,
-    },
 }
