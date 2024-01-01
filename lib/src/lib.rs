@@ -18,13 +18,11 @@ pub struct FlexispotE7Controller {
     pin: OutputPin,
 }
 
-impl Default for FlexispotE7Controller {
-    fn default() -> Self {
-        FlexispotE7Controller::try_new_with("/dev/ttyS0", 12).unwrap()
-    }
-}
-
 impl FlexispotE7Controller {
+    pub fn try_new() -> Result<Self, Box<dyn Error>> {
+        FlexispotE7Controller::try_new_with("/dev/ttyS0", 12)
+    }
+
     pub fn try_new_with(path: impl Into<PathBuf>, pin20: u8) -> Result<Self, Box<dyn Error>> {
         Ok(Self {
             uart: Uart::with_path(path.into(), 9600, Parity::None, 8, 1)?,
