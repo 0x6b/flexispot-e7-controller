@@ -18,14 +18,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     match command {
         Up { diff } => controller.up(diff)?,
         Down { diff } => controller.down(diff)?,
-        Go { preset } => match preset {
-            command::Preset::Standing => controller.standing()?,
-            command::Preset::Sitting => controller.sitting()?,
-            command::Preset::Preset1 => controller.preset1()?,
-            command::Preset::Preset2 => controller.preset2()?,
-            command::Preset::Preset3 => controller.preset3()?,
-            command::Preset::Preset4 => controller.preset4()?,
-        },
+        Go { preset } => controller.go(&preset)?,
         Set { height } => controller.set(height)?,
         Query => {
             let height = controller.query()?;

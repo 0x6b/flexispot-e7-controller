@@ -1,4 +1,5 @@
-use clap::{Subcommand, ValueEnum};
+use clap::Subcommand;
+use flexispot_e7_controller_lib::Preset;
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
@@ -20,7 +21,8 @@ pub enum Command {
         height: f32,
     },
 
-    /// Go to the preset position [possible values: standing, sitting, preset1, preset2, preset3, preset4]
+    /// Go to the preset position [possible values: standing, sitting, preset1, preset2, preset3,
+    /// preset4]
     Go {
         /// Preset name
         #[clap(value_enum)]
@@ -29,40 +31,4 @@ pub enum Command {
 
     /// Query current height.
     Query,
-}
-
-#[derive(Clone, Debug, ValueEnum)]
-pub enum Preset {
-    /// Standing height
-    Standing,
-
-    /// Sitting height
-    Sitting,
-
-    /// Position 1
-    Preset1,
-
-    /// Position 2
-    Preset2,
-
-    /// Position 3, alias for Standing
-    Preset3,
-
-    /// Position 4, alias for Sitting
-    Preset4,
-}
-
-impl From<String> for Preset {
-    fn from(s: String) -> Self {
-        use Preset::*;
-        match s.to_lowercase().as_str() {
-            "standing" => Standing,
-            "sitting" => Sitting,
-            "preset1" => Preset1,
-            "preset2" => Preset2,
-            "preset3" => Preset3,
-            "preset4" => Preset4,
-            _ => Standing,
-        }
-    }
 }

@@ -1,15 +1,14 @@
 use std::{error::Error, path::PathBuf, thread, time::Duration};
 
+pub use command::Command;
+use command::CommandArray;
+pub use command::Preset;
 use rppal::{
     gpio::{Gpio, OutputPin},
     uart::{Parity, Uart},
 };
 
-use crate::command::{
-    Command,
-    Command::{Down, Preset1, Preset2, Preset3, Preset4, Sitting, Standing, Up},
-};
-
+use crate::command::Command::{Down, Up};
 mod command;
 
 #[derive(Debug)]
@@ -30,8 +29,9 @@ impl FlexispotE7Controller {
         })
     }
 
-    fn execute(&mut self, command: &Command) -> Result<(), Box<dyn Error>> {
-        self.uart.write(&command.command())?;
+    fn execute(&mut self, command: impl Into<CommandArray>) -> Result<(), Box<dyn Error>> {
+        let command: [u8; 8] = command.into();
+        self.uart.write(&command)?;
         Ok(())
     }
 
@@ -49,6 +49,10 @@ impl FlexispotE7Controller {
         Ok(())
     }
 
+    pub fn go(&mut self, preset: &Preset) -> Result<(), Box<dyn Error>> {
+        self.execute(preset)
+    }
+
     pub fn set(&mut self, height: f32) -> Result<(), Box<dyn Error>> {
         let current = self.query()?;
         let height = Self::normalize(height);
@@ -59,30 +63,6 @@ impl FlexispotE7Controller {
         } else {
             self.down(Some(diff))
         }
-    }
-
-    pub fn standing(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Standing)?)
-    }
-
-    pub fn sitting(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Sitting)?)
-    }
-
-    pub fn preset1(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Preset1)?)
-    }
-
-    pub fn preset2(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Preset2)?)
-    }
-
-    pub fn preset3(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Preset3)?)
-    }
-
-    pub fn preset4(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Preset4)?)
     }
 
     pub fn query(&mut self) -> Result<i32, Box<dyn Error>> {
@@ -112,6 +92,7 @@ impl FlexispotE7Controller {
                 if history[1] == 0x9b {
                     msg_type = data[0];
                 }
+                #[allow(clippy::collapsible_if)]
                 if history[2] == 0x9b {
                     if msg_type == 0x12 && msg_len == 7 {
                         if data[0] == 0 {
@@ -121,6 +102,7 @@ impl FlexispotE7Controller {
                         }
                     }
                 }
+                #[allow(clippy::collapsible_if)]
                 if history[3] == 0x9b {
                     if valid {
                         history[4] = history[3];
@@ -131,6 +113,7 @@ impl FlexispotE7Controller {
                         continue;
                     }
                 }
+                #[allow(clippy::collapsible_if)]
                 if history[4] == 0x9b {
                     if valid && msg_len == 7 {
                         return Self::decode(history[1], history[0], data[0]);
@@ -160,9 +143,9 @@ impl FlexispotE7Controller {
         let mut height = height1 + height2 + height3;
 
         if decimal1 || decimal2 || decimal3 {
-            height = height / 10;
+            height /= 10;
         }
-        return Ok(height);
+        Ok(height)
     }
 
     fn decode_seven_segment(byte: u8) -> (i32, bool) {
@@ -186,12 +169,9 @@ impl FlexispotE7Controller {
     }
 
     fn to_loop_count(diff: Option<f32>) -> usize {
+        // 29 is determined heuristically, so it may not be accurate for every setup.
         match diff {
-            Some(v) => {
-                let v = v.abs();
-                // 29 is determined heuristically, so it may not be accurate for every setup.
-                return (v * 29f32).ceil() as usize;
-            }
+            Some(v) => (v.abs() * 29f32).ceil() as usize,
             None => 1,
         }
     }
@@ -202,6 +182,6 @@ impl FlexispotE7Controller {
         } else if v > 126.0 {
             return 126.0;
         }
-        return v;
+        v
     }
 }
