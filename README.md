@@ -2,11 +2,32 @@
 
 Control your Flexspot E7 programmatically.
 
-## Raspberry Pi 4
+## Usage
 
-Tested on Ubuntu 22.04.3 LTS.
+Tested on Ubuntu 22.04.3 LTS on Raspberry Pi 4.
 
-### Hardware Setup
+```console
+$ cargo run --quiet -- --help
+Control your Flexispot E7 with Raspberry Pi
+
+Usage: e7 [OPTIONS] <COMMAND>
+
+Commands:
+  up     Adjust the desk upwards. If specified, adjsut upwards in centimeters. Not so accurate
+  down   Adjust the desk downwards. If specified, adjsut downwards in centimeters. Not so accurate
+  set    Set the desk height to the specified centimeters. Not so accurate
+  go     Go to the preset position [default: standing] [possible values: standing, sitting, preset1, preset2, preset3, preset4]
+  query  Query current height
+  help   Print this message or the help of the given subcommand(s)
+
+Options:
+      --device <DEVICE>  Path to serial device [default: /dev/ttyS0]
+      --pin20 <PIN20>    GPIO (BCM) number of PIN 20 [default: 12]
+  -h, --help             Print help
+  -V, --version          Print version
+```
+
+## Hardware Setup
 
 You will need following parts other than the Pi.
 
@@ -106,15 +127,6 @@ Rebooting the Pi would reset the permission. You may have to configure systemd a
 
 5. Reboot the pi and see how it works.
 
-## Python
-
-```console
-$ python3 -m venv .venv
-$ source .venv/bin/activate
-$ pip install -r requirements.txt
-$ python LoctekMotion_IoT/packages/raspberry-pi/flexispot.py up
-```
-
-# Acknowledgements
+## Acknowledgements
 
 - [iMicknl/LoctekMotion_IoT](https://github.com/iMicknl/LoctekMotion_IoT) for their work.

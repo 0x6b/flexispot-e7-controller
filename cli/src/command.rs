@@ -20,10 +20,10 @@ pub enum Command {
         height: f32,
     },
 
-    /// Go to the preset position.
+    /// Go to the preset position [default: standing] [possible values: standing, sitting, preset1, preset2, preset3, preset4]
     Go {
         /// Preset name
-        #[clap(value_enum, default_value_t = Preset::Standing)]
+        #[clap(value_enum)]
         preset: Preset,
     },
 
