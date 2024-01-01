@@ -1,0 +1,10 @@
+[package]
+name = "flexispot_e7_controller_lib"
+version = "0.1.0"
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+description = "Library to control your Flexispot E7 with Raspberry Pi"
+
+[dependencies]
+rppal = "0.16.1"
