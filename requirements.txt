@@ -1,2 +1,0 @@
-pyserial==3.5
-RPi.GPIO==0.7.1

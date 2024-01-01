@@ -5,9 +5,7 @@ use flexispot_e7_controller_lib::FlexispotE7Controller;
 
 use crate::{
     args::Args,
-    command::Command::{
-        Down, Preset1, Preset2, Preset3, Preset4, Query, Set, Sitting, Standing, Up,
-    },
+    command::Command::{Down, Go, Query, Set, Up},
 };
 
 mod args;
@@ -20,13 +18,15 @@ fn main() -> Result<(), Box<dyn Error>> {
     match command {
         Up { diff } => controller.up(diff)?,
         Down { diff } => controller.down(diff)?,
+        Go { preset } => match preset {
+            command::Preset::Standing => controller.standing()?,
+            command::Preset::Sitting => controller.sitting()?,
+            command::Preset::Preset1 => controller.preset1()?,
+            command::Preset::Preset2 => controller.preset2()?,
+            command::Preset::Preset3 => controller.preset3()?,
+            command::Preset::Preset4 => controller.preset4()?,
+        },
         Set { height } => controller.set(height)?,
-        Standing => controller.standing()?,
-        Sitting => controller.sitting()?,
-        Preset1 => controller.preset1()?,
-        Preset2 => controller.preset2()?,
-        Preset3 => controller.preset3()?,
-        Preset4 => controller.preset4()?,
         Query => {
             let height = controller.query()?;
             println!("Current height: {height} cm");
