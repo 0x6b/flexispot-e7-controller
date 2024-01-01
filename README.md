@@ -15,8 +15,8 @@ Usage: e7 [OPTIONS] <COMMAND>
 Commands:
   up     Adjust the desk upwards. If specified, adjsut upwards in centimeters. Not so accurate
   down   Adjust the desk downwards. If specified, adjsut downwards in centimeters. Not so accurate
-  set    Set the desk height to the specified centimeters. Not so accurate
   go     Go to the preset position [possible values: standing, sitting, preset1, preset2, preset3, preset4]
+  set    Set the desk height to the specified centimeters. Not so accurate
   query  Query current height
   help   Print this message or the help of the given subcommand(s)
 

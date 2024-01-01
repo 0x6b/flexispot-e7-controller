@@ -15,18 +15,18 @@ pub enum Command {
         diff: Option<f32>,
     },
 
-    /// Set the desk height to the specified centimeters. Not so accurate.
-    Set {
-        /// Height to set, in cm.
-        height: f32,
-    },
-
     /// Go to the preset position [possible values: standing, sitting, preset1, preset2, preset3,
     /// preset4]
     Go {
         /// Preset name
         #[clap(value_enum)]
         preset: Preset,
+    },
+
+    /// Set the desk height to the specified centimeters. Not so accurate.
+    Set {
+        /// Height to set, in cm.
+        height: f32,
     },
 
     /// Query current height.
