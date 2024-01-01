@@ -1,15 +1,14 @@
 use std::{error::Error, path::PathBuf, thread, time::Duration};
 
+pub use command::Command;
+use command::CommandArray;
 pub use command::Preset;
 use rppal::{
     gpio::{Gpio, OutputPin},
     uart::{Parity, Uart},
 };
 
-use crate::command::{
-    Command,
-    Command::{Down, Up},
-};
+use crate::command::Command::{Down, Up};
 mod command;
 
 #[derive(Debug)]
@@ -30,14 +29,9 @@ impl FlexispotE7Controller {
         })
     }
 
-    pub fn go(&mut self, preset: &Preset) -> Result<(), Box<dyn Error>> {
-        let command: [u8; 8] = preset.into();
+    fn execute(&mut self, command: impl Into<CommandArray>) -> Result<(), Box<dyn Error>> {
+        let command: [u8; 8] = command.into();
         self.uart.write(&command)?;
-        Ok(())
-    }
-
-    fn execute(&mut self, command: &Command) -> Result<(), Box<dyn Error>> {
-        self.uart.write(&command.command())?;
         Ok(())
     }
 
@@ -53,6 +47,10 @@ impl FlexispotE7Controller {
             self.execute(&Down)?;
         }
         Ok(())
+    }
+
+    pub fn go(&mut self, preset: &Preset) -> Result<(), Box<dyn Error>> {
+        self.execute(preset)
     }
 
     pub fn set(&mut self, height: f32) -> Result<(), Box<dyn Error>> {
