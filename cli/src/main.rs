@@ -5,7 +5,9 @@ use flexispot_e7_controller_lib::FlexispotE7Controller;
 
 use crate::{
     args::Args,
-    command::Command::{Down, Preset1, Preset2, Preset3, Preset4, Query, Sitting, Standing, Up},
+    command::Command::{
+        Down, Preset1, Preset2, Preset3, Preset4, Query, Set, Sitting, Standing, Up,
+    },
 };
 
 mod args;
@@ -16,8 +18,9 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let mut controller = FlexispotE7Controller::try_new_with(device, pin20)?;
     match command {
-        Up => controller.up()?,
-        Down => controller.down()?,
+        Up { diff } => controller.up(diff)?,
+        Down { diff } => controller.down(diff)?,
+        Set { height } => controller.set(height)?,
         Standing => controller.standing()?,
         Sitting => controller.sitting()?,
         Preset1 => controller.preset1()?,

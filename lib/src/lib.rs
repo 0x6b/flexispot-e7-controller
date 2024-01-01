@@ -35,12 +35,30 @@ impl FlexispotE7Controller {
         Ok(())
     }
 
-    pub fn up(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Up)?)
+    pub fn up(&mut self, diff: Option<f32>) -> Result<(), Box<dyn Error>> {
+        for _ in 0..Self::to_loop_count(diff) {
+            self.execute(&Up)?;
+        }
+        Ok(())
     }
 
-    pub fn down(&mut self) -> Result<(), Box<dyn Error>> {
-        Ok(self.execute(&Down)?)
+    pub fn down(&mut self, diff: Option<f32>) -> Result<(), Box<dyn Error>> {
+        for _ in 0..Self::to_loop_count(diff) {
+            self.execute(&Down)?;
+        }
+        Ok(())
+    }
+
+    pub fn set(&mut self, height: f32) -> Result<(), Box<dyn Error>> {
+        let current = self.query()?;
+        let height = Self::normalize(height);
+        let diff = current as f32 - height;
+
+        if diff < 0f32 {
+            self.up(Some(diff))
+        } else {
+            self.down(Some(diff))
+        }
     }
 
     pub fn standing(&mut self) -> Result<(), Box<dyn Error>> {
@@ -165,5 +183,25 @@ impl FlexispotE7Controller {
             },
             byte & 0b1000_0000 != 0,
         )
+    }
+
+    fn to_loop_count(diff: Option<f32>) -> usize {
+        match diff {
+            Some(v) => {
+                let v = v.abs();
+                // 29 is determined heuristically, so it may not be accurate for every setup.
+                return (v * 29f32).ceil() as usize;
+            }
+            None => 1,
+        }
+    }
+
+    fn normalize(v: f32) -> f32 {
+        if v < 60.5 {
+            return 60.5;
+        } else if v > 126.0 {
+            return 126.0;
+        }
+        return v;
     }
 }
