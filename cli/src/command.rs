@@ -1,43 +1,68 @@
-use clap::Subcommand;
+use clap::{Subcommand, ValueEnum};
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    /// Adjust the desk upwards. If specified, adjsut upwards in centimeters.
+    /// Adjust the desk upwards. If specified, adjsut upwards in centimeters. Not so accurate.
     Up {
-        /// Height to change, in cm
+        /// Height to change, in cm.
         diff: Option<f32>,
     },
 
-    /// Adjust the desk downwards. If specified, adjsut downwards in centimeters.
+    /// Adjust the desk downwards. If specified, adjsut downwards in centimeters. Not so accurate.
     Down {
-        /// Height to change, in cm
+        /// Height to change, in cm.
         diff: Option<f32>,
     },
 
     /// Set the desk height to the specified centimeters. Not so accurate.
     Set {
-        /// Height in cm
+        /// Height to set, in cm.
         height: f32,
     },
 
-    /// Move to the position you saved for standing height.
+    /// Go to the preset position.
+    Go {
+        /// Preset name
+        #[clap(value_enum, default_value_t = Preset::Standing)]
+        preset: Preset,
+    },
+
+    /// Query current height.
+    Query,
+}
+
+#[derive(Clone, Debug, ValueEnum)]
+pub enum Preset {
+    /// Standing height
     Standing,
 
-    /// Move to the position you saved for sitting height.
+    /// Sitting height
     Sitting,
 
-    /// Move to the position 1.
+    /// Position 1
     Preset1,
 
-    /// Move to the position 2.
+    /// Position 2
     Preset2,
 
-    /// Move to the position 3, alias for "standing" position.
+    /// Position 3, alias for Standing
     Preset3,
 
-    /// Move to the position 4, alias for "sitting" position.
+    /// Position 4, alias for Sitting
     Preset4,
+}
 
-    /// Query current height
-    Query,
+impl From<String> for Preset {
+    fn from(s: String) -> Self {
+        use Preset::*;
+        match s.to_lowercase().as_str() {
+            "standing" => Standing,
+            "sitting" => Sitting,
+            "preset1" => Preset1,
+            "preset2" => Preset2,
+            "preset3" => Preset3,
+            "preset4" => Preset4,
+            _ => Standing,
+        }
+    }
 }
