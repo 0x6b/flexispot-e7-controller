@@ -1,5 +1,8 @@
 use std::{
     error::Error,
+    fs::read_to_string,
+    net::IpAddr,
+    path::PathBuf,
     sync::{Arc, RwLock},
 };
 
@@ -9,8 +12,9 @@ use axum::{
     middleware::{from_fn_with_state, Next},
     response::{IntoResponse, Response},
     routing::{get, post},
-    Json, Router,
+    serve, Json, Router,
 };
+use clap::Parser;
 use flexispot_e7_controller_lib::{Command, FlexispotE7Controller};
 use serde::{Deserialize, Serialize};
 
@@ -51,11 +55,41 @@ struct AppState {
     secret: String,
 }
 
+#[derive(Debug, Parser)]
+#[clap(about, version)]
+pub struct Args {
+    #[clap(short, long, default_value = "config.toml")]
+    config: PathBuf,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub struct Config {
+    /// Path to serial device
+    pub device: PathBuf,
+
+    /// GPIO (BCM) number of PIN 20
+    pub pin20: u8,
+
+    /// Authentication secret
+    pub secret: String,
+
+    /// IP address to bind
+    pub address: IpAddr,
+
+    /// Port number to bind
+    pub port: u16,
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
+    let args = Args::parse();
+    let Config { device, pin20, secret, address, port } =
+        toml::from_str(&(read_to_string(args.config)?))?;
+
     let state = AppState {
-        controller: Arc::new(RwLock::new(FlexispotE7Controller::try_new_with("/dev/ttyS0", 12)?)),
-        secret: "secret".to_string(),
+        controller: Arc::new(RwLock::new(FlexispotE7Controller::try_new_with(device, pin20)?)),
+        secret,
     };
 
     let app = Router::new()
@@ -63,8 +97,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .route("/", post(post_handler))
         .route_layer(from_fn_with_state(state.clone(), auth))
         .with_state(state);
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:8000").await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+
+    let listener = tokio::net::TcpListener::bind(format!("{address}:{port}"))
+        .await
+        .unwrap();
+
+    serve(listener, app).await.unwrap();
     Ok(())
 }
 

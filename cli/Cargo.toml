@@ -11,6 +11,6 @@ name = "e7"
 path = "src/main.rs"
 
 [dependencies]
-clap = { version = "4.4.12", features = ["derive"] }
+clap.workspace = true
 rppal = "0.16.1"
 flexispot_e7_controller_lib.workspace = true
