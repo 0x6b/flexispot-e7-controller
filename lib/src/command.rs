@@ -87,12 +87,12 @@ impl From<String> for Preset {
     fn from(s: String) -> Self {
         use Preset::*;
         match s.to_lowercase().as_str() {
-            "standing" => Standing,
-            "sitting" => Sitting,
-            "preset1" => Preset1,
-            "preset2" => Preset2,
-            "preset3" => Preset3,
-            "preset4" => Preset4,
+            s if s.starts_with("st") => Standing,
+            s if s.starts_with("si") => Sitting,
+            s if s.starts_with('p') && s.ends_with('1') => Preset1,
+            s if s.starts_with('p') && s.ends_with('2') => Preset2,
+            s if s.starts_with('p') && s.ends_with('3') => Preset3,
+            s if s.starts_with('p') && s.ends_with('4') => Preset4,
             _ => Standing,
         }
     }
