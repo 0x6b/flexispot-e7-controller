@@ -110,6 +110,8 @@ name = "flexispot_e7_controller_lib"
 version = "0.1.0"
 dependencies = [
  "rppal",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
