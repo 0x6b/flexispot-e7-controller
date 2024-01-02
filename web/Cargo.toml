@@ -5,6 +5,10 @@ authors.workspace = true
 edition.workspace = true
 repository.workspace = true
 
+[[bin]]
+name = "e7server"
+path = "src/server.rs"
+
 [dependencies]
 axum = { version = "0.7.3", default-features = false, features = ["http1", "json", "tokio", "tower-log", "tracing"] }
 clap.workspace = true

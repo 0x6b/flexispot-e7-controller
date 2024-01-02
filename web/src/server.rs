@@ -8,7 +8,7 @@ use std::{
 
 use axum::{
     extract::{Request, State},
-    http::{header, StatusCode},
+    http::{header::AUTHORIZATION, StatusCode},
     middleware::{from_fn_with_state, Next},
     response::{IntoResponse, Response},
     routing::{get, post},
@@ -111,19 +111,14 @@ async fn auth(
     req: Request,
     next: Next,
 ) -> Result<Response, StatusCode> {
-    let header = match req
+    match req
         .headers()
-        .get(header::AUTHORIZATION)
-        .and_then(|header| header.to_str().ok())
+        .get(AUTHORIZATION)
+        .and_then(|v| v.to_str().ok())
+        .filter(|v| *v == state.secret)
     {
-        Some(v) => v,
-        None => return Err(StatusCode::UNAUTHORIZED),
-    };
-
-    if header == state.secret {
-        Ok(next.run(req).await)
-    } else {
-        Err(StatusCode::UNAUTHORIZED)
+        Some(_) => Ok(next.run(req).await),
+        None => Err(StatusCode::UNAUTHORIZED),
     }
 }
 
