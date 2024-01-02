@@ -4,9 +4,10 @@ use std::{
 };
 
 use axum::{
-    extract::State,
-    http::StatusCode,
-    response::IntoResponse,
+    extract::{Request, State},
+    http::{header, StatusCode},
+    middleware::{from_fn_with_state, Next},
+    response::{IntoResponse, Response},
     routing::{get, post},
     Json, Router,
 };
@@ -47,21 +48,45 @@ impl From<i32> for ResponsePayload {
 #[derive(Clone)]
 struct AppState {
     controller: Arc<RwLock<FlexispotE7Controller>>,
+    secret: String,
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let state = AppState {
         controller: Arc::new(RwLock::new(FlexispotE7Controller::try_new_with("/dev/ttyS0", 12)?)),
+        secret: "secret".to_string(),
     };
 
     let app = Router::new()
         .route("/query", get(query_handler))
         .route("/", post(post_handler))
+        .route_layer(from_fn_with_state(state.clone(), auth))
         .with_state(state);
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
     Ok(())
+}
+
+async fn auth(
+    State(state): State<AppState>,
+    req: Request,
+    next: Next,
+) -> Result<Response, StatusCode> {
+    let header = match req
+        .headers()
+        .get(header::AUTHORIZATION)
+        .and_then(|header| header.to_str().ok())
+    {
+        Some(v) => v,
+        None => return Err(StatusCode::UNAUTHORIZED),
+    };
+
+    if header == state.secret {
+        Ok(next.run(req).await)
+    } else {
+        Err(StatusCode::UNAUTHORIZED)
+    }
 }
 
 async fn query_handler(State(state): State<AppState>) -> impl IntoResponse {
