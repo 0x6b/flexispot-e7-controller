@@ -15,7 +15,7 @@ Usage: e7 [OPTIONS] <COMMAND>
 Commands:
   up     Adjust the desk upwards. If specified, adjsut upwards in centimeters. Not so accurate
   down   Adjust the desk downwards. If specified, adjsut downwards in centimeters. Not so accurate
-  go     Go to the preset position [possible values: standing, sitting, preset1, preset2, preset3, preset4]
+  go     Go to the preset position [possible values: standing/preset3, sitting/preset4, preset1, preset2]
   set    Set the desk height to the specified centimeters. Not so accurate
   query  Query current height
   help   Print this message or the help of the given subcommand(s)
@@ -129,4 +129,5 @@ Rebooting the Pi would reset the permission. You may have to configure systemd a
 
 ## Acknowledgements
 
-- [iMicknl/LoctekMotion_IoT](https://github.com/iMicknl/LoctekMotion_IoT) for their work.
+- [iMicknl/LoctekMotion_IoT](https://github.com/iMicknl/LoctekMotion_IoT)
+- [grssmnn/ha-flexispot-standing-desk](https://github.com/grssmnn/ha-flexispot-standing-desk)

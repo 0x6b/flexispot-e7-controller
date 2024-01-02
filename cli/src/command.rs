@@ -15,8 +15,8 @@ pub enum Command {
         diff: Option<f32>,
     },
 
-    /// Go to the preset position [possible values: standing, sitting, preset1, preset2, preset3,
-    /// preset4]
+    /// Go to the preset position [possible values: standing/preset3, sitting/preset4, preset1,
+    /// preset2]
     Go {
         /// Preset name
         #[clap(value_enum)]
@@ -31,4 +31,16 @@ pub enum Command {
 
     /// Query current height.
     Query,
+}
+
+impl From<Command> for flexispot_e7_controller_lib::Command {
+    fn from(c: Command) -> Self {
+        match c {
+            Command::Up { diff } => flexispot_e7_controller_lib::Command::Up { diff },
+            Command::Down { diff } => flexispot_e7_controller_lib::Command::Down { diff },
+            Command::Go { preset } => flexispot_e7_controller_lib::Command::Go { preset },
+            Command::Set { height } => flexispot_e7_controller_lib::Command::Set { height },
+            Command::Query => flexispot_e7_controller_lib::Command::Query,
+        }
+    }
 }
