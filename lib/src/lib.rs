@@ -13,14 +13,14 @@ use rppal::{
 mod command;
 
 #[derive(Debug)]
-pub struct FlexispotE7Controller {
+pub struct Controller {
     uart: Uart,
     pin: OutputPin,
 }
 
-impl FlexispotE7Controller {
+impl Controller {
     pub fn try_new() -> Result<Self, Box<dyn Error>> {
-        FlexispotE7Controller::try_new_with("/dev/ttyS0", 12)
+        Controller::try_new_with("/dev/ttyS0", 12)
     }
 
     pub fn try_new_with(path: impl Into<PathBuf>, pin20: u8) -> Result<Self, Box<dyn Error>> {

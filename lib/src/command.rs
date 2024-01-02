@@ -1,4 +1,7 @@
-#[derive(Debug, Clone)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum Command {
     /// Adjust the desk upwards
     Up {
@@ -40,29 +43,26 @@ pub type CommandSequence = [u8; 8];
 impl From<&Command> for CommandSequence {
     fn from(c: &Command) -> Self {
         use Command::*;
+        use Preset::*;
         match c {
             Up { .. } => [0x9b, 0x06, 0x02, 0x01, 0x00, 0xfc, 0xa0, 0x9d],
             Down { .. } => [0x9b, 0x06, 0x02, 0x02, 0x00, 0x0c, 0xa0, 0x9d],
             Go { preset } => match preset {
-                Preset::Standing | Preset::Preset3 => {
-                    [0x9b, 0x06, 0x02, 0x10, 0x00, 0xac, 0xac, 0x9d]
-                }
-                Preset::Sitting | Preset::Preset4 => {
-                    [0x9b, 0x06, 0x02, 0x00, 0x01, 0xac, 0x60, 0x9d]
-                }
-                Preset::Preset1 => [0x9b, 0x06, 0x02, 0x04, 0x00, 0xac, 0xa3, 0x9d],
-                Preset::Preset2 => [0x9b, 0x06, 0x02, 0x08, 0x00, 0xac, 0xa6, 0x9d],
+                Standing | Preset3 => [0x9b, 0x06, 0x02, 0x10, 0x00, 0xac, 0xac, 0x9d],
+                Sitting | Preset4 => [0x9b, 0x06, 0x02, 0x00, 0x01, 0xac, 0x60, 0x9d],
+                Preset1 => [0x9b, 0x06, 0x02, 0x04, 0x00, 0xac, 0xa3, 0x9d],
+                Preset2 => [0x9b, 0x06, 0x02, 0x08, 0x00, 0xac, 0xa6, 0x9d],
             },
             WakeUp => [0x9b, 0x06, 0x02, 0x00, 0x00, 0x6c, 0xa1, 0x9d],
             Memory => [0x9b, 0x06, 0x02, 0x20, 0x00, 0xac, 0xb8, 0x9d],
-            // dummy
-            Set { .. } => [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
-            Query => [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            Set { .. } => unreachable!("Set variant should not be used to command the controller"),
+            Query => unreachable!("Query variant should not be used to command the controller"),
         }
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum Preset {
     /// The position of the standing height saved
     Standing,
@@ -87,12 +87,12 @@ impl From<String> for Preset {
     fn from(s: String) -> Self {
         use Preset::*;
         match s.to_lowercase().as_str() {
-            "standing" => Standing,
-            "sitting" => Sitting,
-            "preset1" => Preset1,
-            "preset2" => Preset2,
-            "preset3" => Preset3,
-            "preset4" => Preset4,
+            s if s.starts_with("st") => Standing,
+            s if s.starts_with("si") => Sitting,
+            s if s.starts_with('p') && s.ends_with('1') => Preset1,
+            s if s.starts_with('p') && s.ends_with('2') => Preset2,
+            s if s.starts_with('p') && s.ends_with('3') => Preset3,
+            s if s.starts_with('p') && s.ends_with('4') => Preset4,
             _ => Standing,
         }
     }
