@@ -1,13 +1,14 @@
 use std::{error::Error, path::PathBuf, thread, time::Duration};
 
-use command::CommandArray;
 pub use command::{Command, Preset};
+use command::{
+    Command::{Down, Go, Memory, Query, Set, Up, WakeUp},
+    CommandSequence,
+};
 use rppal::{
     gpio::{Gpio, OutputPin},
     uart::{Parity, Uart},
 };
-
-use crate::command::Command::{Down, Up};
 
 mod command;
 
@@ -29,40 +30,32 @@ impl FlexispotE7Controller {
         })
     }
 
-    fn execute(&mut self, command: impl Into<CommandArray>) -> Result<(), Box<dyn Error>> {
-        let command: [u8; 8] = command.into();
-        self.uart.write(&command)?;
-        Ok(())
-    }
+    pub fn execute(&mut self, command: &Command) -> Result<(), Box<dyn Error>> {
+        let seq = CommandSequence::from(command);
+        match command {
+            Up { diff } | Down { diff } => {
+                for _ in 0..Self::to_loop_count(*diff) {
+                    self.uart.write(&seq)?;
+                }
+            }
+            Go { .. } | WakeUp | Memory => {
+                self.uart.write(&seq)?;
+            }
+            Set { height } => {
+                let current = self.query()? as f32;
+                let target = Self::normalize(*height);
+                let diff = target - current;
 
-    pub fn up(&mut self, diff: Option<f32>) -> Result<(), Box<dyn Error>> {
-        for _ in 0..Self::to_loop_count(diff) {
-            self.execute(&Up)?;
+                if diff > 0f32 {
+                    self.execute(&Up { diff: Some(diff) })?;
+                } else {
+                    self.execute(&Down { diff: Some(diff) })?;
+                }
+            }
+            Query => unreachable!("unreachable"),
         }
+
         Ok(())
-    }
-
-    pub fn down(&mut self, diff: Option<f32>) -> Result<(), Box<dyn Error>> {
-        for _ in 0..Self::to_loop_count(diff) {
-            self.execute(&Down)?;
-        }
-        Ok(())
-    }
-
-    pub fn go(&mut self, preset: &Preset) -> Result<(), Box<dyn Error>> {
-        self.execute(preset)
-    }
-
-    pub fn set(&mut self, height: f32) -> Result<(), Box<dyn Error>> {
-        let current = self.query()?;
-        let height = Self::normalize(height);
-        let diff = current as f32 - height;
-
-        if diff < 0f32 {
-            self.up(Some(diff))
-        } else {
-            self.down(Some(diff))
-        }
     }
 
     pub fn query(&mut self) -> Result<i32, Box<dyn Error>> {
@@ -71,11 +64,11 @@ impl FlexispotE7Controller {
         thread::sleep(Duration::from_millis(100));
         self.pin.set_low();
 
-        // Command::WakeUp should work, but my unit/environment won't return current hight reliably
-        // self.execute(&Command::WakeUp)?;
+        // WakeUp should work, but my unit/environment won't return current hight reliably
+        // self.execute(&WakeUp)?;
 
-        // So use Command::Memory instead
-        self.execute(&Command::Memory)?;
+        // So use Memory instead
+        self.execute(&Memory)?;
 
         self.uart.set_read_mode(1, Duration::default())?;
         let mut data = [0u8; 1];
