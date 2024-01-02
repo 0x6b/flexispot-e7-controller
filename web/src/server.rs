@@ -15,7 +15,7 @@ use axum::{
     serve, Json, Router,
 };
 use clap::Parser;
-use flexispot_e7_controller_lib::{Command, FlexispotE7Controller};
+use flexispot_e7_controller_lib::{Command, Controller};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
@@ -51,7 +51,7 @@ impl From<i32> for ResponsePayload {
 
 #[derive(Clone)]
 struct AppState {
-    controller: Arc<RwLock<FlexispotE7Controller>>,
+    controller: Arc<RwLock<Controller>>,
     secret: String,
 }
 
@@ -88,7 +88,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         toml::from_str(&(read_to_string(args.config)?))?;
 
     let state = AppState {
-        controller: Arc::new(RwLock::new(FlexispotE7Controller::try_new_with(device, pin20)?)),
+        controller: Arc::new(RwLock::new(Controller::try_new_with(device, pin20)?)),
         secret,
     };
 
