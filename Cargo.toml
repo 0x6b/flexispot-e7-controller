@@ -12,5 +12,6 @@ version = "0.3.0"
 [workspace.dependencies]
 clap = { version = "4.4.12", features = ["derive"] }
 flexispot_e7_controller_lib = { path = "lib" }
+flexispot_e7_controller_web = { path = "web" }
 serde = { version = "1.0.193", features = ["derive"] }
 serde_json = "1.0.109"
