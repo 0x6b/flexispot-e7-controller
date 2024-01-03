@@ -10,10 +10,6 @@ description = "Control your Flexispot E7 with Raspberry Pi"
 name = "e7"
 path = "src/main.rs"
 
-[[bin]]
-name = "e7http"
-path = "src/http.rs"
-
 [dependencies]
 clap.workspace = true
 rppal = "0.16.1"

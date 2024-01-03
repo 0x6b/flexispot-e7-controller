@@ -1,7 +1,39 @@
+use std::{net::IpAddr, path::PathBuf};
+
 use clap::Subcommand;
 use flexispot_e7_controller_lib::Preset;
 
 #[derive(Debug, Subcommand)]
+pub enum Mode {
+    /// Control locally connected Flexispot
+    Local {
+        #[clap(subcommand)]
+        command: Command,
+
+        /// Path to serial device
+        #[clap(long, default_value = "/dev/ttyS0")]
+        device: PathBuf,
+
+        /// GPIO (BCM) number of PIN 20
+        #[clap(long, default_value = "12")]
+        pin20: u8,
+    },
+    /// Control Flexispot via remote server
+    Remote {
+        #[clap(subcommand)]
+        command: Command,
+
+        /// IP address of remote control server
+        #[clap(long, default_value = "192.168.68.52")]
+        address: IpAddr,
+
+        /// Port number of remote control server
+        #[clap(long, default_value = "8000")]
+        port: u16,
+    },
+}
+
+#[derive(Debug, Clone, Subcommand)]
 pub enum Command {
     /// Adjust the desk upwards. If specified, adjsut upwards in centimeters. Not so accurate.
     Up {
