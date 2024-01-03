@@ -9,6 +9,10 @@ repository.workspace = true
 name = "e7server"
 path = "src/server.rs"
 
+[lib]
+name = "flexispot_e7_controller_web"
+path = "src/lib.rs"
+
 [dependencies]
 axum = { version = "0.7.3", default-features = false, features = ["http1", "json", "tokio", "tower-log", "tracing"] }
 clap.workspace = true
