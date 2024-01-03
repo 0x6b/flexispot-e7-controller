@@ -1,10 +1,13 @@
-use std::{net::IpAddr, path::PathBuf};
+use std::net::IpAddr;
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
+use std::path::PathBuf;
 
 use clap::Subcommand;
 use flexispot_e7_controller_lib::Preset;
 
 #[derive(Debug, Subcommand)]
 pub enum Mode {
+    #[cfg(all(target_os = "linux", target_arch = "arm"))]
     /// Control locally connected Flexispot
     Local {
         #[clap(subcommand)]
