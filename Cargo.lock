@@ -243,7 +243,6 @@ dependencies = [
  "clap",
  "flexispot_e7_controller_lib",
  "flexispot_e7_controller_web",
- "rppal",
  "ureq",
 ]
 

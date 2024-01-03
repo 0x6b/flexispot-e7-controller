@@ -2,10 +2,9 @@ use std::{env::var, error::Error, time::Duration};
 
 use clap::Parser;
 use command::{Command, Mode};
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
 use flexispot_e7_controller_lib::Controller;
 use flexispot_e7_controller_web::{RequestPayload, ResponsePayload};
-
-use crate::command::Command::Query;
 
 mod command;
 
@@ -20,17 +19,18 @@ fn main() -> Result<(), Box<dyn Error>> {
     let Args { mode } = Args::parse();
 
     match mode {
-        command::Mode::Local { command, device, pin20 } => {
+        #[cfg(all(target_os = "linux", target_arch = "arm"))]
+        Mode::Local { command, device, pin20 } => {
             let mut controller = Controller::try_new_with(device, pin20)?;
             match command {
-                Query => {
+                Command::Query => {
                     let height = controller.query()?;
                     println!("Current height: {height} cm");
                 }
                 _ => controller.execute(&command.into())?,
             };
         }
-        command::Mode::Remote { command, address, port } => {
+        Mode::Remote { command, address, port } => {
             let secret =
                 var("E7_SECRET").expect("Specify secret with E7_SECRET environment variable");
             let client = ureq::AgentBuilder::new()

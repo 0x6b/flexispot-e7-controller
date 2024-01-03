@@ -7,6 +7,8 @@ repository.workspace = true
 description = "Library to control your Flexispot E7 with Raspberry Pi"
 
 [dependencies]
-rppal = "0.16.1"
 serde.workspace = true
 serde_json.workspace = true
+
+[target.'cfg(all(target_os = "linux", target_arch = "arm"))'.dependencies]
+rppal = "0.16.1"

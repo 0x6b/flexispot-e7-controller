@@ -1,11 +1,12 @@
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
 use std::{
-    error::Error,
     fs::read_to_string,
     net::IpAddr,
     path::PathBuf,
     sync::{Arc, RwLock},
 };
 
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
 use axum::{
     extract::{Request, State},
     http::{header::AUTHORIZATION, StatusCode},
@@ -14,17 +15,23 @@ use axum::{
     routing::{get, post},
     serve, Json, Router,
 };
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
 use clap::Parser;
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
 use flexispot_e7_controller_lib::{Command, Controller};
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
 use flexispot_e7_controller_web::{RequestPayload, ResponsePayload};
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
 use serde::Deserialize;
 
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
 #[derive(Clone)]
 struct AppState {
     controller: Arc<RwLock<Controller>>,
     secret: String,
 }
 
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
 #[derive(Debug, Parser)]
 #[clap(about, version)]
 pub struct Args {
@@ -32,6 +39,7 @@ pub struct Args {
     config: PathBuf,
 }
 
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub struct Config {
@@ -52,30 +60,34 @@ pub struct Config {
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
-    let args = Args::parse();
-    let Config { device, pin20, secret, address, port } =
-        toml::from_str(&(read_to_string(args.config)?))?;
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    #[cfg(all(target_os = "linux", target_arch = "arm"))]
+    {
+        let args = Args::parse();
+        let Config { device, pin20, secret, address, port } =
+            toml::from_str(&(read_to_string(args.config)?))?;
 
-    let state = AppState {
-        controller: Arc::new(RwLock::new(Controller::try_new_with(device, pin20)?)),
-        secret,
-    };
+        let state = AppState {
+            controller: Arc::new(RwLock::new(Controller::try_new_with(device, pin20)?)),
+            secret,
+        };
 
-    let app = Router::new()
-        .route("/query", get(query_handler))
-        .route("/", post(post_handler))
-        .route_layer(from_fn_with_state(state.clone(), auth))
-        .with_state(state);
+        let app = Router::new()
+            .route("/query", get(query_handler))
+            .route("/", post(post_handler))
+            .route_layer(from_fn_with_state(state.clone(), auth))
+            .with_state(state);
 
-    let listener = tokio::net::TcpListener::bind(format!("{address}:{port}"))
-        .await
-        .unwrap();
+        let listener = tokio::net::TcpListener::bind(format!("{address}:{port}"))
+            .await
+            .unwrap();
 
-    serve(listener, app).await.unwrap();
+        serve(listener, app).await.unwrap();
+    }
     Ok(())
 }
 
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
 async fn auth(
     State(state): State<AppState>,
     req: Request,
@@ -92,6 +104,7 @@ async fn auth(
     }
 }
 
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
 async fn query_handler(State(state): State<AppState>) -> impl IntoResponse {
     let mut controller = state.controller.write().unwrap();
     match (*controller).query() {
@@ -100,6 +113,7 @@ async fn query_handler(State(state): State<AppState>) -> impl IntoResponse {
     }
 }
 
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
 async fn post_handler(
     State(state): State<AppState>,
     Json(payload): Json<RequestPayload>,

@@ -12,7 +12,6 @@ path = "src/main.rs"
 
 [dependencies]
 clap.workspace = true
-rppal = "0.16.1"
 flexispot_e7_controller_lib.workspace = true
 flexispot_e7_controller_web.workspace = true
 ureq = { version = "2.9.1", default-features = false, features = ["json"] }

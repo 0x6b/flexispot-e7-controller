@@ -1,10 +1,13 @@
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
 use std::{error::Error, path::PathBuf, thread, time::Duration};
 
 pub use command::{Command, Preset};
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
 use command::{
     Command::{Down, Go, Memory, Query, Set, Up, WakeUp},
     CommandSequence,
 };
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
 use rppal::{
     gpio::{Gpio, OutputPin},
     uart::{Parity, Uart},
@@ -12,12 +15,14 @@ use rppal::{
 
 mod command;
 
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
 #[derive(Debug)]
 pub struct Controller {
     uart: Uart,
     pin: OutputPin,
 }
 
+#[cfg(all(target_os = "linux", target_arch = "arm"))]
 impl Controller {
     pub fn try_new() -> Result<Self, Box<dyn Error>> {
         Controller::try_new_with("/dev/ttyS0", 12)
