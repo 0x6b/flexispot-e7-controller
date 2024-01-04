@@ -1,5 +1,5 @@
 #[cfg(all(target_os = "linux", target_arch = "arm"))]
-use std::{error::Error, path::PathBuf, thread, time::Duration};
+use std::{error::Error, path::PathBuf, thread::sleep, time::Duration};
 
 pub use command::{Command, Preset};
 #[cfg(all(target_os = "linux", target_arch = "arm"))]
@@ -64,16 +64,12 @@ impl Controller {
     }
 
     pub fn query(&mut self) -> Result<i32, Box<dyn Error>> {
-        // Wake up controller to return current height. I'm not 100% sure I need this though.
+        // Wake up controller to return current height. I'm not 100% sure I need this though. It
+        // looks it does nothing.
         self.pin.set_high();
-        thread::sleep(Duration::from_millis(100));
+        sleep(Duration::from_millis(800));
         self.pin.set_low();
-
-        // WakeUp should work, but my unit/environment won't return current hight reliably
-        // self.execute(&WakeUp)?;
-
-        // So use Memory instead
-        self.execute(&Memory)?;
+        self.execute(&WakeUp)?;
 
         self.uart.set_read_mode(1, Duration::default())?;
         let mut data = [0u8; 1];
