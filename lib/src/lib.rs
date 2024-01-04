@@ -22,6 +22,30 @@ pub struct Controller {
     pin: OutputPin,
 }
 
+#[cfg(test)]
+mod test {
+    use std::time::Duration;
+
+    use crc16::*;
+
+    use crate::Controller;
+
+    #[test]
+    fn test() {
+        let mut controller = Controller::try_new().unwrap();
+        let seq = [0x06, 0x02, 0x0c, 0x00];
+        let crc = State::<MODBUS>::calculate(&seq);
+        println!("CRC: {:x}", crc);
+        let high = (crc >> 8) as u8;
+        let low = crc as u8;
+        let seq = [0x9b, seq[0], seq[1], seq[2], seq[3], high, low, 0x9d];
+
+        std::thread::sleep(Duration::from_secs(1));
+        println!("{}", seq.iter().map(|byte| format!("{:02x} ", byte)).collect::<String>());
+        controller.uart.write(&seq).unwrap();
+    }
+}
+
 #[cfg(all(target_os = "linux", target_arch = "arm"))]
 impl Controller {
     pub fn try_new() -> Result<Self, Box<dyn Error>> {

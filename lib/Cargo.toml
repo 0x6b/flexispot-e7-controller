@@ -7,6 +7,7 @@ repository.workspace = true
 description = "Library to control your Flexispot E7 with Raspberry Pi"
 
 [dependencies]
+crc16 = "0.4.0"
 serde.workspace = true
 serde_json.workspace = true
 
