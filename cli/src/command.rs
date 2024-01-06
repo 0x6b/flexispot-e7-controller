@@ -1,6 +1,4 @@
 use std::net::IpAddr;
-#[cfg(all(target_os = "linux", target_arch = "arm"))]
-use std::path::PathBuf;
 
 use clap::Subcommand;
 use flexispot_e7_controller_lib::Preset;
@@ -15,7 +13,7 @@ pub enum Mode {
 
         /// Path to serial device
         #[clap(long, default_value = "/dev/ttyS0")]
-        device: PathBuf,
+        device: std::path::PathBuf,
 
         /// GPIO (BCM) number of PIN 20
         #[clap(long, default_value = "12")]

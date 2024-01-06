@@ -1,16 +1,15 @@
-#[cfg(all(target_os = "linux", target_arch = "arm"))]
-use std::{error::Error, path::PathBuf, thread::sleep, time::Duration};
-
 pub use command::{Command, Preset};
 #[cfg(all(target_os = "linux", target_arch = "arm"))]
-use command::{
-    Command::{Down, Go, Memory, Query, Set, Up, WakeUp},
-    CommandSequence,
-};
-#[cfg(all(target_os = "linux", target_arch = "arm"))]
-use rppal::{
-    gpio::{Gpio, OutputPin},
-    uart::{Parity, Uart},
+use {
+    command::{
+        Command::{Down, Go, Memory, Query, Set, Up, WakeUp},
+        CommandSequence,
+    },
+    rppal::{
+        gpio::{Gpio, OutputPin},
+        uart::{Parity, Uart},
+    },
+    std::{error::Error, path::PathBuf, thread::sleep, time::Duration},
 };
 
 mod command;
