@@ -244,6 +244,7 @@ dependencies = [
  "flexispot_e7_controller_lib",
  "flexispot_e7_controller_web",
  "ureq",
+ "url",
 ]
 
 [[package]]
