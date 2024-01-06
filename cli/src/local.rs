@@ -6,9 +6,6 @@ use {
 };
 
 #[cfg(all(target_os = "linux", target_arch = "arm"))]
-use crate::command::Command;
-
-#[cfg(all(target_os = "linux", target_arch = "arm"))]
 pub fn execute(command: Command, device: PathBuf, pin20: u8) -> Result<(), Box<dyn Error>> {
     let mut controller = Controller::try_new_with(device, pin20)?;
     match command {
