@@ -15,4 +15,5 @@ pub fn execute(command: Command, device: PathBuf, pin20: u8) -> Result<(), Box<d
         }
         _ => controller.execute(&command.into())?,
     };
+    Ok(())
 }
