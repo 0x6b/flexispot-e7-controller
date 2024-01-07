@@ -46,7 +46,7 @@ impl Controller {
                 self.uart.write(&seq)?;
             }
             Set { height } => {
-                let current = self.query()? as f32;
+                let current = self.query()?;
                 let target = Self::normalize(*height);
                 let diff = target - current;
 
@@ -62,7 +62,7 @@ impl Controller {
         Ok(())
     }
 
-    pub fn query(&mut self) -> Result<i32, Box<dyn Error>> {
+    pub fn query(&mut self) -> Result<f32, Box<dyn Error>> {
         // Wake up controller to return current height. I'm not 100% sure I need this though. It
         // looks it does nothing.
         self.pin.set_high();
@@ -121,7 +121,7 @@ impl Controller {
         }
     }
 
-    fn decode(b0: u8, b1: u8, b2: u8) -> Result<i32, Box<dyn Error>> {
+    fn decode(b0: u8, b1: u8, b2: u8) -> Result<f32, Box<dyn Error>> {
         let (height1, decimal1) = Self::decode_seven_segment(b0);
         let (height2, decimal2) = Self::decode_seven_segment(b1);
         let (height3, decimal3) = Self::decode_seven_segment(b2);
@@ -133,10 +133,10 @@ impl Controller {
             return Err("Display empty".into());
         }
 
-        let mut height = height1 + height2 + height3;
+        let mut height: f32 = height1 as f32 + height2 as f32 + height3 as f32;
 
         if decimal1 || decimal2 || decimal3 {
-            height /= 10;
+            height /= 10f32;
         }
         Ok(height)
     }
