@@ -1,0 +1,4 @@
+[env]
+ESPFLASH_PORT = "/dev/cu.usbserial-xxxxxxxxxxx"
+ESP32C3_SSID = "ssid"
+ESP32C3_PSK = "psk"
