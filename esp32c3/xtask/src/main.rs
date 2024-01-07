@@ -7,7 +7,7 @@ use clap::{Parser, Subcommand};
 use serde::Deserialize;
 
 #[derive(Debug, Parser)]
-#[clap(about)]
+#[clap(about, override_usage = "cargo <x|xtask> [OPTIONS] <COMMAND>")]
 struct Args {
     #[clap(subcommand)]
     sub_command: SubCommand,
