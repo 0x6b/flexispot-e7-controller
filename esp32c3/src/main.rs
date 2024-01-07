@@ -1,20 +1,28 @@
+use std::{thread, time::Duration};
+
 use anyhow::{bail, Result};
 use esp_idf_svc::{
     hal::{
         delay::BLOCK,
-        gpio::{Gpio0, Gpio1},
+        gpio::{Gpio0, Gpio1, Gpio6, Output, PinDriver},
         peripherals::Peripherals,
-        uart::{
-            config,
-            config::{DataBits::DataBits8, StopBits},
-            UartDriver,
-        },
+        uart::{config, UartDriver},
         units::Hertz,
     },
     log::EspLogger,
     sys,
 };
 use flexispot_e7_controller_lib::Command;
+use log::info;
+
+fn turn_on(pin20: &mut PinDriver<Gpio6, Output>) -> Result<()> {
+    info!("============================== setting high");
+    pin20.set_high()?;
+    thread::sleep(Duration::from_secs(1));
+    info!("============================== setting low");
+    pin20.set_low()?;
+    Ok(())
+}
 
 fn main() -> Result<()> {
     sys::link_patches();
@@ -23,6 +31,9 @@ fn main() -> Result<()> {
     let peripherals = Peripherals::take()?;
     let tx = peripherals.pins.gpio4;
     let rx = peripherals.pins.gpio5;
+    let pin20 = peripherals.pins.gpio6;
+    let mut pin20 = PinDriver::output(pin20)?;
+    turn_on(&mut pin20)?;
 
     let config = config::Config::new().baudrate(Hertz(9600)).queue_size(8);
     let uart = UartDriver::new(
@@ -35,9 +46,10 @@ fn main() -> Result<()> {
     )?;
 
     let seq: [u8; 8] = (&Command::Up { diff: None }).into();
-    uart.write(&seq)?;
+    let sent = uart.write(&seq)?;
+    info!("sent: {sent}");
     let height = query(&uart)?;
-    log::info!("height: {height}");
+    info!("height: {height}");
     Ok(())
 }
 
