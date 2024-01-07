@@ -1,5 +1,5 @@
 [workspace]
-members = ["cli", "lib", "web"]
+members = ["cli", "esp32c3", "lib", "web"]
 default-members = ["cli"]
 resolver = "2"
 
