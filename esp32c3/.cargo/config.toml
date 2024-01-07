@@ -10,7 +10,7 @@ rustflags = ["--cfg", "espidf_time64", "-C", "default-linker-libraries"]
 build-std = ["std", "panic_abort"]
 
 [env]
-MCU="esp32c3"
+MCU = "esp32c3"
 # Note: this variable is not used by the pio builder (`cargo build --features pio`)
 ESP_IDF_VERSION = "v5.1.1"
 
@@ -18,5 +18,9 @@ ESP_IDF_VERSION = "v5.1.1"
 opt-level = "s"
 
 [profile.dev]
-debug = true    # Symbols are nice and they don't increase the size on Flash
+debug = true # Symbols are nice and they don't increase the size on Flash
 opt-level = "z"
+
+[alias]
+xtask = "run --target aarch64-apple-darwin --manifest-path ./xtask/Cargo.toml --"
+x = "xtask"
