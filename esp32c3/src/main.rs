@@ -41,8 +41,6 @@ fn main() -> Result<()> {
     let seq: [u8; 8] = (&Command::Up { diff: None }).into();
     uart.write(&seq)?;
     let height = query(&uart)?;
-    // let mut buf = [0_u8; 1];
-    // uart.read(&mut buf, BLOCK).unwrap();
     log::info!("height: {height}");
     Ok(())
 }
