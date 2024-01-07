@@ -24,11 +24,7 @@ fn main() -> Result<()> {
     let tx = peripherals.pins.gpio4;
     let rx = peripherals.pins.gpio5;
 
-    let config = config::Config::new()
-        .baudrate(Hertz(9600))
-        .parity_none()
-        .data_bits(DataBits8)
-        .stop_bits(StopBits::STOP1);
+    let config = config::Config::new().baudrate(Hertz(9600)).queue_size(8);
     let uart = UartDriver::new(
         peripherals.uart1,
         tx,
