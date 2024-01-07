@@ -855,6 +855,7 @@ dependencies = [
  "anyhow",
  "embuild",
  "esp-idf-svc",
+ "flexispot_e7_controller_lib",
  "log",
  "rgb",
 ]
