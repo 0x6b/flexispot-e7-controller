@@ -9,13 +9,13 @@ RJ45 breakout | M5Stamp C3 pinout
       GND (7) | G4              |
        RX (6) | G5          3V3 |
        TX (5) | G6          G21 |
-              | G7          G20 |
+    PIN20 (4) | G7          G20 |
               | G8           EN |
               | G10          G9 |
               | 5V          GND |
               | GND         G18 |
               | 5V          G19 |
-              | G1           5V |
+              | G1   _____   5V |
               | G0  (USB-C) GND |
 ```
 
