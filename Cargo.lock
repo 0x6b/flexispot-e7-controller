@@ -846,7 +846,7 @@ dependencies = [
 
 [[package]]
 name = "esp32c3"
-version = "0.5.4"
+version = "0.5.5"
 dependencies = [
  "anyhow",
  "embuild",
