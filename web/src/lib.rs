@@ -13,7 +13,7 @@ pub struct RequestPayload {
 #[serde(rename_all = "lowercase")]
 pub enum ResponsePayload {
     Message(String),
-    Height(i32),
+    Height(f32),
 }
 
 impl Display for ResponsePayload {
@@ -37,8 +37,8 @@ impl From<Box<dyn Error>> for ResponsePayload {
     }
 }
 
-impl From<i32> for ResponsePayload {
-    fn from(i: i32) -> Self {
-        ResponsePayload::Height(i)
+impl From<f32> for ResponsePayload {
+    fn from(f: f32) -> Self {
+        ResponsePayload::Height(f)
     }
 }
