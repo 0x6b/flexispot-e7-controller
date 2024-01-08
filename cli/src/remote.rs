@@ -10,9 +10,9 @@ pub fn execute(command: Command, address: IpAddr, port: u16) -> Result<(), Box<d
     let secret = var("E7_SECRET").expect("Specify secret with E7_SECRET environment variable");
 
     let client = ureq::AgentBuilder::new()
-        .timeout_connect(Duration::from_secs(1))
-        .timeout_read(Duration::from_secs(1))
-        .timeout_write(Duration::from_secs(1))
+        .timeout_connect(Duration::from_secs(10))
+        .timeout_read(Duration::from_secs(10))
+        .timeout_write(Duration::from_secs(10))
         .middleware(move |req: Request, next: MiddlewareNext| {
             next.handle(req.set("Authorization", &secret))
         })
