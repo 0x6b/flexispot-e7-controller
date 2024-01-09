@@ -238,7 +238,7 @@ checksum = "5443807d6dff69373d433ab9ef5378ad8df50ca6298caf15de6e52e24aaf54d5"
 
 [[package]]
 name = "flexispot_e7_controller_cli"
-version = "0.5.6"
+version = "0.5.7"
 dependencies = [
  "clap",
  "flexispot_e7_controller_lib",
@@ -249,7 +249,7 @@ dependencies = [
 
 [[package]]
 name = "flexispot_e7_controller_lib"
-version = "0.5.6"
+version = "0.5.7"
 dependencies = [
  "rppal",
  "serde",
@@ -258,7 +258,7 @@ dependencies = [
 
 [[package]]
 name = "flexispot_e7_controller_web"
-version = "0.5.6"
+version = "0.5.7"
 dependencies = [
  "axum",
  "clap",
