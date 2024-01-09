@@ -18,6 +18,7 @@ use {
         path::PathBuf,
         sync::{Arc, RwLock},
     },
+    tracing::info,
 };
 
 #[cfg(all(target_os = "linux", target_arch = "arm"))]
@@ -59,9 +60,12 @@ pub struct Config {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     #[cfg(all(target_os = "linux", target_arch = "arm"))]
     {
+        tracing_subscriber::fmt().with_max_level(tracing::Level::INFO).init();
         let args = Args::parse();
         let Config { device, pin20, secret, address, port } =
             toml::from_str(&(read_to_string(args.config)?))?;
+
+        info!("{address}:{port}");
 
         let state = AppState {
             controller: Arc::new(RwLock::new(Controller::try_new_with(device, pin20)?)),
@@ -104,7 +108,10 @@ async fn auth(
 async fn query_handler(State(state): State<AppState>) -> impl IntoResponse {
     let mut controller = state.controller.write().unwrap();
     match (*controller).query() {
-        Ok(height) => (StatusCode::OK, Json(ResponsePayload::from(height))),
+        Ok(height) => {
+            info!("/query: {height}cm");
+            (StatusCode::OK, Json(ResponsePayload::from(height)))
+        }
         Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, Json(ResponsePayload::from(e))),
     }
 }
@@ -114,6 +121,7 @@ async fn post_handler(
     State(state): State<AppState>,
     Json(payload): Json<RequestPayload>,
 ) -> impl IntoResponse {
+    info!("{:?}", payload);
     let command = payload.command;
     if command == Command::Query || command == Command::WakeUp || command == Command::Memory {
         return (
