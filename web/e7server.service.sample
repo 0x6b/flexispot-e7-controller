@@ -1,0 +1,17 @@
+[Unit]
+Description=e7server
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/e7server --config /etc/e7server.toml
+Restart=always
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=e7server
+SyslogFacility=local7
+WatchdogSec=120
+
+[Install]
+WantedBy=multi-user.target
