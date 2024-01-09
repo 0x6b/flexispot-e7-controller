@@ -1,28 +1,24 @@
 #[cfg(all(target_os = "linux", target_arch = "arm"))]
-use std::{
-    fs::read_to_string,
-    net::IpAddr,
-    path::PathBuf,
-    sync::{Arc, RwLock},
+use {
+    axum::{
+        extract::{Request, State},
+        http::{header::AUTHORIZATION, StatusCode},
+        middleware::{from_fn_with_state, Next},
+        response::{IntoResponse, Response},
+        routing::{get, post},
+        serve, Json, Router,
+    },
+    clap::Parser,
+    flexispot_e7_controller_lib::{Command, Controller},
+    flexispot_e7_controller_web::{RequestPayload, ResponsePayload},
+    serde::Deserialize,
+    std::{
+        fs::read_to_string,
+        net::IpAddr,
+        path::PathBuf,
+        sync::{Arc, RwLock},
+    },
 };
-
-#[cfg(all(target_os = "linux", target_arch = "arm"))]
-use axum::{
-    extract::{Request, State},
-    http::{header::AUTHORIZATION, StatusCode},
-    middleware::{from_fn_with_state, Next},
-    response::{IntoResponse, Response},
-    routing::{get, post},
-    serve, Json, Router,
-};
-#[cfg(all(target_os = "linux", target_arch = "arm"))]
-use clap::Parser;
-#[cfg(all(target_os = "linux", target_arch = "arm"))]
-use flexispot_e7_controller_lib::{Command, Controller};
-#[cfg(all(target_os = "linux", target_arch = "arm"))]
-use flexispot_e7_controller_web::{RequestPayload, ResponsePayload};
-#[cfg(all(target_os = "linux", target_arch = "arm"))]
-use serde::Deserialize;
 
 #[cfg(all(target_os = "linux", target_arch = "arm"))]
 #[derive(Clone)]
