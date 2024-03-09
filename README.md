@@ -1,16 +1,20 @@
 # flexispot-e7-controller
 
-Control your Flexspot E7 programmatically.
+Control your Flexspot E7 programmatically. Tested on Ubuntu 22.04.3 LTS on Raspberry Pi 4.
 
 ## Usage
 
-Tested on Ubuntu 22.04.3 LTS on Raspberry Pi 4.
+There are two modes to control the desk, `local` and `remote`. The `local` mode directly controls the desk from the Pi, while the `remote` mode controls the desk via a remote server which is connected to the desk.
+
+### `local` mode
+
+Directly control the desk from the Pi. See the "Hardware Setup" section for the connection between the Pi and the desk.
 
 ```console
-$ cargo run --quiet -- --help
-Control your Flexispot E7 with Raspberry Pi
+$ e7c local -h
+Control locally connected Flexispot
 
-Usage: e7 [OPTIONS] <COMMAND>
+Usage: e7c local [OPTIONS] <COMMAND>
 
 Commands:
   up     Adjust the desk upwards. If specified, adjsut upwards in centimeters. Not so accurate
@@ -24,7 +28,30 @@ Options:
       --device <DEVICE>  Path to serial device [default: /dev/ttyS0]
       --pin20 <PIN20>    GPIO (BCM) number of PIN 20 [default: 12]
   -h, --help             Print help
-  -V, --version          Print version
+```
+
+### `remote` mode
+
+Control the desk via a remote server, which is connected to the desk running on the Pi. See the "Hardware Setup" section and [web/README.md](web/README.md) for instructions.
+
+```console
+$ e7c local -h
+Control Flexispot via remote server
+
+Usage: e7c remote [OPTIONS] <COMMAND>
+
+Commands:
+  up     Adjust the desk upwards. If specified, adjsut upwards in centimeters. Not so accurate
+  down   Adjust the desk downwards. If specified, adjsut downwards in centimeters. Not so accurate
+  go     Go to the preset position [possible values: standing/preset3, sitting/preset4, preset1, preset2]
+  set    Set the desk height to the specified centimeters. Not so accurate
+  query  Query current height
+  help   Print this message or the help of the given subcommand(s)
+
+Options:
+      --address <ADDRESS>  IP address of remote control server [default: 192.168.68.52]
+      --port <PORT>        Port number of remote control server [default: 8000]
+  -h, --help               Print help
 ```
 
 ## Hardware Setup
@@ -40,7 +67,7 @@ Connection should be straightforward.
 Flexispot E7 controller --(RJ45)-- RJ45 breakout -- Raspberry Pi 4
 ```
 
-The script expects following connection between the breakout and the Pi.
+The script expects the following connection between the breakout and the Pi.
 
 ```
   Raspberry Pi 4 pinout  | RJ45 breakout
