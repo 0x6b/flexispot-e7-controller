@@ -40,7 +40,7 @@ pub struct Args {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub struct Config {
-    /// Path to serial device
+    /// Path to the serial device
     pub device: PathBuf,
 
     /// GPIO (BCM) number of PIN 20

@@ -6,6 +6,26 @@ Control your Flexspot E7 programmatically. Tested on Ubuntu 22.04.3 LTS on Raspb
 
 There are two modes to control the desk, `local` and `remote`. The `local` mode directly controls the desk from the Pi, while the `remote` mode controls the desk via a remote server which is connected to the desk.
 
+```
+┌──────────────────────────────┐
+│Raspberry Pi                  │
+│                              │         ┌──────────┐
+│ ┌──────────────────────────┐ │  RJ45   │Flexispot │
+│ │      RJ45 breakout       │─┼─────────│    E7    │
+│ └──────▲─────────────▲─────┘ │         │Controller│
+│        │             │       │         └──────────┘
+│        │             │       │
+│ ┌──────┴─────┐ ╔═════╩═════╗ │
+│ │ web server │ ║ local CLI ║ │
+│ └──────▲─────┘ ╚═══════════╝ │
+│        │                     │
+└────────┼─────────────────────┘
+         │
+  ╔══════╩═════╗
+  ║ remote CLI ║
+  ╚════════════╝
+```
+
 ### `local` mode
 
 Directly control the desk from the Pi. See the "Hardware Setup" section for the connection between the Pi and the desk.
@@ -32,10 +52,10 @@ Options:
 
 ### `remote` mode
 
-Control the desk via a remote server, which is connected to the desk running on the Pi. See the "Hardware Setup" section and [web/README.md](web/README.md) for instructions.
+Control the desk via a remote server, which is connected to the desk running on the Pi. See the "Hardware Setup" section and [web/README.md](web/README.md) for instructions. Set `E7_SECRET` environment variable to the authentication key of the remote server.
 
 ```console
-$ e7c local -h
+$ e7c remote -h
 Control Flexispot via remote server
 
 Usage: e7c remote [OPTIONS] <COMMAND>

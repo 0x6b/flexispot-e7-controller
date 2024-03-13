@@ -1,0 +1,14 @@
+# Path to the serial device
+device = "/dev/ttyS0"
+
+# GPIO (BCM) number of PIN 20
+pin20 = 12
+
+# Authentication secret
+secret = "secret"
+
+# IP address to bind
+address = "0.0.0.0"
+
+# Port number to bind
+port = 8000
