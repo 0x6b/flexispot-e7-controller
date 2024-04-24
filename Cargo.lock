@@ -66,6 +66,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "anyhow"
+version = "1.0.82"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f538837af36e6f6a9be0faa67f9a314f8119e4e4b5867c6ab40ed60360142519"
+
+[[package]]
 name = "async-trait"
 version = "0.1.77"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -235,8 +241,9 @@ checksum = "5443807d6dff69373d433ab9ef5378ad8df50ca6298caf15de6e52e24aaf54d5"
 
 [[package]]
 name = "flexispot_e7_controller_cli"
-version = "0.5.8"
+version = "0.6.0"
 dependencies = [
+ "anyhow",
  "clap",
  "flexispot_e7_controller_lib",
  "flexispot_e7_controller_web",
@@ -246,7 +253,7 @@ dependencies = [
 
 [[package]]
 name = "flexispot_e7_controller_lib"
-version = "0.5.8"
+version = "0.6.0"
 dependencies = [
  "rppal",
  "serde",
@@ -255,7 +262,7 @@ dependencies = [
 
 [[package]]
 name = "flexispot_e7_controller_web"
-version = "0.5.8"
+version = "0.6.0"
 dependencies = [
  "axum",
  "clap",

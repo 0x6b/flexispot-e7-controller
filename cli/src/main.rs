@@ -1,3 +1,4 @@
+use anyhow::Result;
 use clap::Parser;
 use command::Mode;
 
@@ -12,13 +13,15 @@ pub struct Args {
     pub mode: Mode,
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<()> {
     let Args { mode } = Args::parse();
 
     match mode {
         #[cfg(all(target_os = "linux", target_arch = "arm"))]
         Mode::Local { command, device, pin20 } => local::execute(command, device, pin20)?,
-        Mode::Remote { command, address, port } => remote::execute(command, address, port)?,
+        Mode::Remote { command, address, port, secret } => {
+            remote::execute(command, address, port, secret)?
+        }
     }
     Ok(())
 }
