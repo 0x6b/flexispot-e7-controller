@@ -31,6 +31,10 @@ pub enum Mode {
         /// Port number of remote control server
         #[clap(long, default_value = "8000")]
         port: u16,
+
+        /// E7_SECRET environment variable
+        #[clap(long, env = "E7_SECRET")]
+        secret: String,
     },
 }
 
