@@ -1,3 +1,4 @@
+use anyhow::Result;
 use clap::Parser;
 use command::Mode;
 
@@ -12,7 +13,7 @@ pub struct Args {
     pub mode: Mode,
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<()> {
     let Args { mode } = Args::parse();
 
     match mode {

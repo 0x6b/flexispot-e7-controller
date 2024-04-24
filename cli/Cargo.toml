@@ -11,6 +11,7 @@ name = "e7c"
 path = "src/main.rs"
 
 [dependencies]
+anyhow.workspace = true
 clap.workspace = true
 flexispot_e7_controller_lib.workspace = true
 flexispot_e7_controller_web.workspace = true

@@ -10,6 +10,7 @@ repository = "https://github.com/0x6b/flexispot-e7-controller"
 version = "0.5.8"
 
 [workspace.dependencies]
+anyhow = "1.0.82"
 clap = { version = "4.5.2", features = ["derive", "env"] }
 flexispot_e7_controller_lib = { path = "lib" }
 flexispot_e7_controller_web = { path = "web" }
