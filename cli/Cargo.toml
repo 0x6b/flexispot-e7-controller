@@ -15,5 +15,5 @@ anyhow.workspace = true
 clap.workspace = true
 flexispot_e7_controller_lib.workspace = true
 flexispot_e7_controller_web.workspace = true
-ureq = { version = "2.9.6", default-features = false, features = ["json"] }
-url = "2.5.0"
+ureq = { version = "2.10.0", default-features = false, features = ["json"] }
+url = "2.5.2"
