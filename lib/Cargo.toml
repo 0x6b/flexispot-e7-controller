@@ -11,4 +11,4 @@ serde.workspace = true
 serde_json.workspace = true
 
 [target.'cfg(all(target_os = "linux", target_arch = "arm"))'.dependencies]
-rppal = "0.17.1"
+rppal = "0.18.0"
