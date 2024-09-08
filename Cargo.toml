@@ -7,12 +7,12 @@ resolver = "2"
 authors = ["kaoru <k@warpnine.io>"]
 edition = "2021"
 repository = "https://github.com/0x6b/flexispot-e7-controller"
-version = "0.6.1"
+version = "0.6.2"
 
 [workspace.dependencies]
-anyhow = "1.0.86"
-clap = { version = "4.5.9", features = ["derive", "env"] }
+anyhow = "1.0.87"
+clap = { version = "4.5.17", features = ["derive", "env"] }
 flexispot_e7_controller_lib = { path = "lib" }
 flexispot_e7_controller_web = { path = "web" }
-serde = { version = "1.0.204", features = ["derive"] }
-serde_json = "1.0.120"
+serde = { version = "1.0.210", features = ["derive"] }
+serde_json = "1.0.128"
