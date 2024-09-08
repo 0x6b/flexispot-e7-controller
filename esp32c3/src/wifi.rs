@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use anyhow::{bail, Result};
 use esp_idf_svc::{
     eventloop::EspSystemEventLoop,
@@ -46,10 +48,12 @@ pub fn wifi(
         );
         None
     };
+    let ssid: heapless::String<32> = heapless::String::from_str(&ssid).unwrap();
+    let password: heapless::String<64> = heapless::String::from_str(&pass).unwrap();
 
     wifi.set_configuration(&Configuration::Client(ClientConfiguration {
-        ssid: ssid.into(),
-        password: pass.into(),
+        ssid,
+        password,
         channel,
         auth_method,
         ..Default::default()

@@ -3,8 +3,8 @@
 ## Tested Environment
 
 - MacBook Pro 14-inch, 2021 (M1 Max)
-- macOS Sonoma 14.2.1 (23C71)
-- Rust 1.77.0-nightly (f688dd684 2024-01-04)
+- macOS Sonoma 14.6.1 (23G93)
+- Rust 1.83.0-nightly (9c01301c5 2024-09-05)
 - [M5Stamp C3 Mate with Pin Headers](https://shop.m5stack.com/products/m5stamp-c3-mate-with-pin-headers) (ESP32-C3)
 
 ## Setup and Verify Development Environment and Hardware
@@ -18,31 +18,6 @@ $ cargo install espflash
 ```
 
 ### Test Your Setup
-
-Now simple project will work. Create a new with `cargo-generate`.
-
-```console
-$ cargo install cargo-generate
-$ cargo generate esp-rs/esp-idf-template cargo
-...
-$ cd your-starter-project-name
-```
-
-Edit `rust-toolchain.toml` to specify the channel to `nightly-2024-01-04`.
-
-```console
-$ $EDITOR rust-toolchain.toml
-```
-
-You have to specify `nightly-2024-01-04` channel explicitly since both `nightly-2024-01-{05,06,07}` won't work for me with following error message, as of 2024-01-07.
-
-```
-error[E0425]: cannot find value `SOMAXCONN` in crate `libc`
-  --> /.../.rustup/toolchains/nightly-aarch64-apple-darwin/lib/rustlib/src/rust/library/std/src/os/unix/net/listener.rs:87:48
-   |
-87 |             const backlog: libc::c_int = libc::SOMAXCONN;
-   |                                                ^^^^^^^^^ not found in `libc`
-```
 
 Connect your device to MacBook and build/install the program with `cargo`. Serial port on my setup is `/dev/cu.usbserial-54F70047301 - USB Single Serial`.
 
@@ -64,9 +39,19 @@ You can test your ESP32-C3 with `hardware_check.rs` which is based on https://gi
 $ ESP32C3_SSID=... ESP32C3_PSK=... cargo run --bin hardware_check
 ```
 
+You should see the following output.
+
+```console
+...
+I (12857) hardware_check: Hello, world!
+I (14857) hardware_check: Hello, world!
+I (16857) hardware_check: Hello, world!
+...
+```
+
 ## `xtask` tasks
 
-A simple [`xtask`](https://github.com/matklad/cargo-xtask/) tasks are available for convenience. This is thin wrapper of `cargo` and `espflash`, which populates environment variables from `xtask-config.toml`. See [`xtask-config.sample.toml`](xtask-config.sample.toml).
+A simple [`xtask`](https://github.com/matklad/cargo-xtask/) tasks are available for convenience. This is a thin wrapper of `cargo` and `espflash`, which populates environment variables from `xtask-config.toml`. See [`xtask-config.sample.toml`](xtask-config.sample.toml).
 
 You may want to modify target triple in `[alias]` section of [`.cargo/config.toml`](.cargo/config.toml) from `aarch64-apple-darwin` to your target platform.
 
@@ -88,7 +73,6 @@ Commands:
 Options:
   -c, --config <CONFIG>  [default: xtask-config.toml]
   -h, --help             Print help
-
 ```
 
 ## References

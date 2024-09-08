@@ -25,11 +25,12 @@ experimental = ["esp-idf-svc/experimental"]
 embassy = ["esp-idf-svc/embassy-sync", "esp-idf-svc/critical-section", "esp-idf-svc/embassy-time-driver"]
 
 [dependencies]
-anyhow = "1.0.79"
-esp-idf-svc = { version = "0.47.3", default-features = false }
-flexispot_e7_controller_lib = { git = "https://github.com/0x6b/flexispot-e7-controller.git", tag = "v0.5.5" }
+anyhow = "1.0.87"
+esp-idf-svc = { version = "0.49.1", default-features = false }
+flexispot_e7_controller_lib = { git = "https://github.com/0x6b/flexispot-e7-controller.git", tag = "v0.6.1" }
+heapless = "0.8.0"
 log = { version = "0.4", default-features = false }
-rgb = "0.8.37"
+rgb = "0.8.50"
 
 [build-dependencies]
-embuild = "0.31.3"
+embuild = "0.32.0"
